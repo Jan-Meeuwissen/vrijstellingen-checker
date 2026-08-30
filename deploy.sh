@@ -33,10 +33,10 @@ if [[ "$DEPLOY_PAD" != */vrijstelling ]]; then
   exit 1
 fi
 
-SSH_OPTS=(-o BatchMode=yes)
+SSH_OPTS=(-4 -o BatchMode=yes)
 [[ -n "${DEPLOY_PORT:-}" ]] && SSH_OPTS+=(-p "$DEPLOY_PORT")
 [[ -n "${DEPLOY_SSH_KEY:-}" ]] && SSH_OPTS+=(-i "$DEPLOY_SSH_KEY")
-SCP_OPTS=(-r)
+SCP_OPTS=(-4 -r)
 [[ -n "${DEPLOY_PORT:-}" ]] && SCP_OPTS+=(-P "$DEPLOY_PORT")
 [[ -n "${DEPLOY_SSH_KEY:-}" ]] && SCP_OPTS+=(-i "$DEPLOY_SSH_KEY")
 
@@ -74,7 +74,11 @@ echo "Doelmap op de server legen (alleen ${DEPLOY_PAD})..."
 ssh "${SSH_OPTS[@]}" "$DOEL" "mkdir -p '${DEPLOY_PAD}' && find '${DEPLOY_PAD}' -mindepth 1 -delete"
 
 echo "Bestanden overzetten..."
-scp "${SCP_OPTS[@]}" "$STAGING"/. "${DOEL}:${DEPLOY_PAD}/"
+# Let op: "$STAGING"/. werkt hier niet — de scp op deze server (SFTP-modus)
+# accepteert die trailing-dot-truc niet ("unexpected filename: ."). In
+# plaats daarvan geven we elk item in de staging-map los mee; bash breidt
+# de glob lokaal uit voor scp het ziet.
+scp "${SCP_OPTS[@]}" "$STAGING"/* "${DOEL}:${DEPLOY_PAD}/"
 
 echo ""
 echo "Klaar. Controleer:"
