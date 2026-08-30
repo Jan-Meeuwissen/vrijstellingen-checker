@@ -19,8 +19,12 @@ const LAATST_BIJGEWERKT = '2026-08-30';
 
 // Voor de 10-jaargrens (§6.3): niet hard "2018" in de tekst, maar afgeleid
 // van het huidige jaar, zodat het vanzelf meebeweegt (vervolgopdracht 01, B2).
+// -9, niet -10: een opleiding start doorgaans in september, een diploma
+// vaak pas in mei/juni. Met -10 zou een bewijsstuk soms net onterecht als
+// "te oud" gelden. -9 is de veilige (ruimere) kant — bij twijfel over de
+// exacte 10-jaarstermijn kijkt de slb'er toch nog mee (zie de uitleg).
 const HUIDIG_JAAR = new Date().getFullYear();
-const GRENSJAAR_10_JAAR = HUIDIG_JAAR - 10;
+const GRENSJAAR_10_JAAR = HUIDIG_JAAR - 9;
 
 // -----------------------------------------------------------------------
 // Onderwerpen die in het startscherm gekozen kunnen worden.
