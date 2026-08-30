@@ -292,7 +292,7 @@
     // "Vrijstelling voor" alleen bij een echte "ja" — bij conclusie 3 mag
     // dit niet als toegekend overkomen (vervolgopdracht 01, A4).
     if (resultaat.uitkomst === 'ja' && resultaat.regel && resultaat.regel.vrijstellingVoor) {
-      regels.push('Vrijstelling voor: ' + resultaat.regel.vrijstellingVoor);
+      regels.push('Vrijstelling mogelijk voor: ' + resultaat.regel.vrijstellingVoor);
     }
     regels.push('Wat nu: ' + watNuTekst(resultaat, antwoorden));
     return regels.join('\n');
@@ -316,7 +316,7 @@
     if (resultaat.uitkomst === 'ja' && resultaat.regel && resultaat.regel.vrijstellingVoor) {
       const voor = document.createElement('div');
       voor.className = 'uitkomst-sectie';
-      voor.innerHTML = `<h2><span class="balkje"></span>Vrijstelling voor</h2><p>${resultaat.regel.vrijstellingVoor}</p>`;
+      voor.innerHTML = `<h2><span class="balkje"></span>Vrijstelling mogelijk voor</h2><p>${resultaat.regel.vrijstellingVoor}</p>`;
       wrap.appendChild(voor);
     }
 
