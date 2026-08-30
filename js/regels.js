@@ -1235,7 +1235,7 @@ function korteRouteRegels() {
       onderwerp: 'lob', route: null, huidigNiveau: null,
       voorwaarden: { lobMetGroep: true },
       uitkomst: 'nee', vrijstellingVoor: null,
-      uitleg: 'Je kunt het LOB-programma met je groep volgen. Dan is er geen vrijstelling nodig.',
+      uitleg: 'Je kunt het LOB-programma met je groep volgen. Dan is er geen vrijstelling mogelijk.',
     },
     {
       id: 'lob-niet-met-groep-onbekend',
