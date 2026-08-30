@@ -31,7 +31,7 @@ const VELD_VOLGORDE = [
   'voldoende',
   'lobMetGroep',
   'langdurigeWerkervaring',
-  'ouderDan10Jaar',
+  'jaarBewijsstuk',
   'eerderOnvoldoende',
   'cohortVanaf2020',
   'gestartVoor2022',
@@ -104,6 +104,30 @@ function vindKandidaten(regels, antwoorden) {
   return regels.filter((r) => regelMatcht(r, antwoorden));
 }
 
+// Onderdrukt de aparte "was je resultaat een onvoldoende?"-vraag zodra er
+// al een cijferbereik bekend is (vervolgopdracht 01, B1): het cijfer dat de
+// student net gaf ís voor déze vrijstellingsregel al de officiële grens
+// (zie de tabellen in §6.4-6.6), dus nog een keer in het algemeen vragen
+// "was het onvoldoende" is dubbelop.
+//
+// Bewuste keuze, en een afwijking van de letterlijke vervolgopdracht: we
+// vullen hier altijd `false` in (nooit `true`), ook als het cijfer
+// duidelijk onder de 5,5 lag. Reden: bij elk bewijsstuk+cijfer-paar ligt de
+// onderwerp-specifieke uitkomst (ja/nee/onbekend) al volledig vast via de
+// eigen cijfergrens van die regel — dat IS al de regeling-eigen beoordeling
+// van "voldoende of niet" voor déze vrijstelling. Zou je hier `true`
+// invullen, dan wint de generieke §6.3-uitsluiting (eerder onvoldoende →
+// mogelijk compensatie, dus onbekend) altijd van een reeds vastgestelde
+// "nee" — dat verandert dan stilzwijgend een duidelijke afwijzing in "kan
+// ik niet beoordelen", wat nergens in de regeling wordt gevraagd en o.a.
+// testgeval 3/5 uit de oorspronkelijke bouwopdracht zou tegenspreken. Zie
+// de opleverbrief.
+function metAfgeleideVelden(antwoorden) {
+  if (isBeantwoord(antwoorden.eerderOnvoldoende)) return antwoorden;
+  if (!waardeBekend(antwoorden.cijfer) && !waardeBekend(antwoorden.cijferHavoVwo)) return antwoorden;
+  return { ...antwoorden, eerderOnvoldoende: false };
+}
+
 // Matcht de regel, én is elk veld waar de regel iets van vindt ook
 // daadwerkelijk (bekend) beantwoord — niet slechts "nog niet tegengesproken".
 // Gebruikt om te bepalen of een regel definitief van toepassing is, ook als
@@ -132,16 +156,20 @@ function heeftOnderwerpSpecifiekeKandidaat(kandidaten) {
 // maar één kandidaat er iets van vindt, want dat ene antwoord kan die
 // kandidaat alsnog laten afvallen (zie test 2 in §12.1: een 2F-bewijsstuk
 // bij niveau 4 moet "nee" opleveren, niet "geen regel gevonden").
-// Velden waarvan "nee"/"niet van toepassing" nergens als losse regel is
-// vastgelegd (er bestaat geen expliciete "niet ouder dan 10 jaar"-regel —
-// dat is domweg de afwezigheid van de uitsluiting). Zonder het volledige
+// Velden waarvan "geen van deze/niet van toepassing" nergens als losse
+// regel is vastgelegd (er bestaat geen expliciete "niet onvoldoende"-regel
+// — dat is domweg de afwezigheid van de uitsluiting). Zonder het volledige
 // domein hier op te geven, zou de motor nooit doorhebben dat dit veld nog
 // iets kan uitsluiten en de vraag dus overslaan.
-const VOLLEDIG_BOOLEAN_DOMEIN = new Set(['heeftEerdereMbo', 'ouderDan10Jaar', 'eerderOnvoldoende']);
+const VOLLEDIGE_DOMEINEN = {
+  heeftEerdereMbo: [true, false],
+  eerderOnvoldoende: [true, false],
+  jaarBewijsstuk: ['vanaf-grensjaar', 'voor-grensjaar'],
+};
 
 function veldDomein(veld, kandidaten) {
   if (veld === 'huidigNiveau' || veld === 'vorigNiveau') return [1, 2, 3, 4];
-  if (VOLLEDIG_BOOLEAN_DOMEIN.has(veld)) return [true, false];
+  if (VOLLEDIGE_DOMEINEN[veld]) return VOLLEDIGE_DOMEINEN[veld];
   const waarden = new Set();
   for (const regel of kandidaten) {
     if (regel.voorwaarden && veld in regel.voorwaarden) waarden.add(regel.voorwaarden[veld]);
@@ -217,6 +245,8 @@ function bepaal(antwoorden, data) {
   if (!waardeBekend(antwoorden.onderwerp)) {
     return { type: 'vraag', veld: 'onderwerp', vraag: 'Waar gaat het om?', opties: data.ONDERWERPEN.map((o) => ({ waarde: o.id, label: o.label })) };
   }
+
+  antwoorden = metAfgeleideVelden(antwoorden);
 
   let kandidaten = vindKandidaten(regels, antwoorden);
   let effectieveAntwoorden = antwoorden;

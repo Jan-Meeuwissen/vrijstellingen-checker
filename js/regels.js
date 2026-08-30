@@ -17,6 +17,11 @@
 const REGELING_VERSIE = '2026-2027';
 const LAATST_BIJGEWERKT = '2026-08-30';
 
+// Voor de 10-jaargrens (§6.3): niet hard "2018" in de tekst, maar afgeleid
+// van het huidige jaar, zodat het vanzelf meebeweegt (vervolgopdracht 01, B2).
+const HUIDIG_JAAR = new Date().getFullYear();
+const GRENSJAAR_10_JAAR = HUIDIG_JAAR - 10;
+
 // -----------------------------------------------------------------------
 // Onderwerpen die in het startscherm gekozen kunnen worden.
 // -----------------------------------------------------------------------
@@ -83,14 +88,20 @@ function uitsluitingsregels(onderwerp) {
   // te herkennen: dat kijkt naar de ONDERWERP-SPECIFIEKE regels, niet naar
   // deze generieke uitsluitingen (die anders altijd kandidaat blijven en
   // een "geen enkele regel"-situatie zouden verbergen).
+  //
+  // We vragen een jaartal, geen "ouder dan 10 jaar?" (dat zijn twee
+  // rekenstappen in één zin voor de student — vervolgopdracht 01, B2).
+  // Uitkomst is 'onbekend', niet 'nee': de exacte 10-jaarstermijn hangt af
+  // van de startdatum van de opleiding, niet alleen van het huidige jaar,
+  // dus de tool kan dit niet met zekerheid vaststellen.
   regels.push({
     id: `${onderwerp}-uitsluiting-ouderdom`,
     bron: '§6.3 Uitsluitingen: bewijsstuk ouder dan 10 jaar',
     onderwerp, algemeen: true,
-    voorwaarden: { ouderDan10Jaar: true },
-    uitkomst: 'nee',
+    voorwaarden: { jaarBewijsstuk: 'voor-grensjaar' },
+    uitkomst: 'onbekend',
     vrijstellingVoor: null,
-    uitleg: 'Je bewijsstuk is ouder dan 10 jaar. Dan telt het niet meer mee voor een vrijstelling.',
+    uitleg: `Een bewijsstuk van vóór ${GRENSJAAR_10_JAAR} telt meestal niet meer mee — dat is meer dan 10 jaar geleden. Het hangt wel af van de startdatum van je opleiding. Je slb’er kan dat voor je nakijken.`,
   });
 
   // EVC
@@ -112,7 +123,7 @@ function uitsluitingsregels(onderwerp) {
     voorwaarden: { bewijsstuk: 'remedierend-keuzedeel' },
     uitkomst: 'nee',
     vrijstellingVoor: null,
-    uitleg: 'Een remediërend keuzedeel geeft geen recht op vrijstelling.',
+    uitleg: 'Een extra vak om je niveau bij te spijkeren (een remediërend keuzedeel) geeft geen recht op vrijstelling.',
   });
 
   // Onbekend/niet-erkend bewijsstuk, of iets dat niet in het lijstje past.
@@ -301,7 +312,7 @@ function nederlandsRegels() {
       onderwerp: 'nederlands', route: 'eerste', huidigNiveau: [4],
       voorwaarden: { bewijsstuk: 'nl-ceie-3f-onderdeel', cijfer: 'vanaf-5,5' },
       uitkomst: 'ja', vrijstellingVoor: '3F generiek Nederlands (dat onderdeel)',
-      uitleg: 'Je hebt dit onderdeel van Nederlands 3F gehaald met minimaal een 5,5.',
+      uitleg: 'Je hebt dit onderdeel van Nederlands 3F gehaald met minimaal een 5,5. Dit gaat alleen over het onderdeel dat je al hebt gehaald — bijvoorbeeld alleen schrijven, of alleen spreken. De rest van het examen Nederlands moet je nog wel doen.',
     },
     {
       id: 'nl-eerste-4-3f-onderdeel-nee',
@@ -392,7 +403,7 @@ function nederlandsRegels() {
         onderwerp: 'nederlands', route: 'lager-gelijk', vorigNiveau: vorig, huidigNiveau: [huidig],
         voorwaarden: { bewijsstuk: 'nl-ie-2f-onderdeel', cijfer: 'vanaf-6,5' },
         uitkomst: 'ja', vrijstellingVoor: '2F generiek Nederlands (dat onderdeel)',
-        uitleg: 'Je hebt dit onderdeel van het schoolexamen Nederlands 2F gehaald met minimaal een 6,5.',
+        uitleg: 'Je hebt dit onderdeel van het schoolexamen Nederlands 2F gehaald met minimaal een 6,5. Dit gaat alleen over het onderdeel dat je al hebt gehaald — bijvoorbeeld alleen schrijven, of alleen spreken. De rest van het examen Nederlands moet je nog wel doen.',
       },
       {
         id: `nl-lg-${vorig}${huidig}-ie-onderdeel-nee`, bron: bron + ' — IE 2F per onderdeel onder 6,5',
@@ -441,7 +452,7 @@ function nederlandsRegels() {
         onderwerp: 'nederlands', route: 'lager-gelijk', vorigNiveau: vorig, huidigNiveau: [huidig],
         voorwaarden: { bewijsstuk: 'nl-ceie-3f-onderdeel', cijfer: 'vanaf-5,5' },
         uitkomst: 'ja', vrijstellingVoor: '3F generiek Nederlands (dat onderdeel)',
-        uitleg: 'Je hebt dit onderdeel van Nederlands 3F gehaald met minimaal een 5,5.',
+        uitleg: 'Je hebt dit onderdeel van Nederlands 3F gehaald met minimaal een 5,5. Dit gaat alleen over het onderdeel dat je al hebt gehaald — bijvoorbeeld alleen schrijven, of alleen spreken. De rest van het examen Nederlands moet je nog wel doen.',
       },
       {
         id: `nl-lg-${vorig}${huidig}-onderdeel-nee`, bron: bron + ' — CE/IE 3F per onderdeel onder 5,5',
@@ -511,7 +522,7 @@ function nederlandsRegels() {
         onderwerp: 'nederlands', route: 'hoger', vorigNiveau: vorig, huidigNiveau: [huidig],
         voorwaarden: { bewijsstuk: 'nl-ie-2f-onderdeel', cijfer: 'vanaf-6,5' },
         uitkomst: 'ja', vrijstellingVoor: '2F generiek Nederlands (dat onderdeel)',
-        uitleg: 'Je hebt dit onderdeel van het schoolexamen Nederlands 2F gehaald met minimaal een 6,5.',
+        uitleg: 'Je hebt dit onderdeel van het schoolexamen Nederlands 2F gehaald met minimaal een 6,5. Dit gaat alleen over het onderdeel dat je al hebt gehaald — bijvoorbeeld alleen schrijven, of alleen spreken. De rest van het examen Nederlands moet je nog wel doen.',
       },
       {
         id: `nl-hg-${vorig}${huidig}-ie-onderdeel-nee`, bron: bron + ' — IE 2F per onderdeel onder 6,5',
@@ -753,7 +764,7 @@ function engelsRegels() {
       onderwerp: 'engels', route: 'lager-gelijk', vorigNiveau: 4, huidigNiveau: [4],
       voorwaarden: { bewijsstuk: 'en-ie-a2-deelresultaat', cijfer: 'vanaf-5,5' },
       uitkomst: 'ja', vrijstellingVoor: 'IE Engels A2 (dat onderdeel)',
-      uitleg: 'Je deelresultaat voor IE Engels A2 was minimaal 5,5.',
+      uitleg: 'Je deelresultaat voor IE Engels A2 was minimaal 5,5. Dit gaat alleen over het onderdeel dat je al hebt gehaald. De rest van het examen Engels moet je nog wel doen.',
     },
     {
       id: 'en-lg-44-ie-a2-deel-nee', bron: '§6.5 Engels, route lager-gelijk 4→4: IE Engels A2 deelresultaat onder 5,5',
@@ -765,18 +776,34 @@ function engelsRegels() {
   );
 
   // -- Route hoger 4→3: K0802, gemiddeld B1/A2 ≥ 5,5 óf gemiddeld B1/B1 ≥ 5,5 --
+  // -- Route hoger 4→2: zelfde voorwaarden als 4→3 (vervolgopdracht 01, A1 —
+  //    ontbrak in de eerste versie: er was geen enkel pad voor deze route).
   regels.push(
     {
       id: 'en-hg-43-ja', bron: '§6.5 Engels, route hoger 4→3 → K0802, gemiddeld B1/A2 ≥ 5,5 óf gemiddeld B1/B1 ≥ 5,5',
       onderwerp: 'engels', route: 'hoger', vorigNiveau: 4, huidigNiveau: [3],
-      voorwaarden: { bewijsstuk: 'en-hg-43-gemiddeld', cijfer: 'vanaf-5,5' },
+      voorwaarden: { bewijsstuk: 'en-hg-hoger-gemiddeld', cijfer: 'vanaf-5,5' },
       uitkomst: 'ja', vrijstellingVoor: 'keuzedeel K0802',
       uitleg: 'Je gemiddelde resultaat was minimaal 5,5.',
     },
     {
       id: 'en-hg-43-nee', bron: '§6.5 Engels, route hoger 4→3: gemiddelde onder 5,5',
       onderwerp: 'engels', route: 'hoger', vorigNiveau: 4, huidigNiveau: [3],
-      voorwaarden: { bewijsstuk: 'en-hg-43-gemiddeld', cijfer: 'onder-5,5' },
+      voorwaarden: { bewijsstuk: 'en-hg-hoger-gemiddeld', cijfer: 'onder-5,5' },
+      uitkomst: 'nee', vrijstellingVoor: null,
+      uitleg: 'Je gemiddelde resultaat was lager dan 5,5.',
+    },
+    {
+      id: 'en-hg-42-ja', bron: '§6.5 Engels, route hoger 4→2 (vervolgopdracht 01, A1 — zelfde voorwaarden als 4→3): K0802, gemiddeld B1/A2 ≥ 5,5 óf gemiddeld B1/B1 ≥ 5,5',
+      onderwerp: 'engels', route: 'hoger', vorigNiveau: 4, huidigNiveau: [2],
+      voorwaarden: { bewijsstuk: 'en-hg-hoger-gemiddeld', cijfer: 'vanaf-5,5' },
+      uitkomst: 'ja', vrijstellingVoor: 'keuzedeel K0802',
+      uitleg: 'Je gemiddelde resultaat was minimaal 5,5.',
+    },
+    {
+      id: 'en-hg-42-nee', bron: '§6.5 Engels, route hoger 4→2: gemiddelde onder 5,5',
+      onderwerp: 'engels', route: 'hoger', vorigNiveau: 4, huidigNiveau: [2],
+      voorwaarden: { bewijsstuk: 'en-hg-hoger-gemiddeld', cijfer: 'onder-5,5' },
       uitkomst: 'nee', vrijstellingVoor: null,
       uitleg: 'Je gemiddelde resultaat was lager dan 5,5.',
     },
@@ -831,7 +858,7 @@ function rekenenRegels() {
       onderwerp: 'rekenen', route: 'eerste', huidigNiveau: [2],
       voorwaarden: { bewijsstuk: 're-3f', cijfer: '4-tot-5,5' },
       uitkomst: 'onbekend', vrijstellingVoor: 'rekenen 2F generiek én keuzedeel rekenen 3F (alleen als aan de slaag-/zakregeling van het keuzedeel is voldaan)',
-      uitleg: 'Je cijfer voor rekenen 3F was tussen de 4 en 5,5. Dit kan mogelijk via een speciale route, maar alleen als je ook aan de slaag-/zakvoorwaarde voor het keuzedeel voldoet. Dat kan deze tool niet vaststellen.',
+      uitleg: 'Je cijfer voor rekenen 3F was tussen de 4 en 5,5. Dit kan mogelijk via een speciale route, maar alleen als je ook aan de slaag-/zakvoorwaarde voor het keuzedeel voldoet. Dat kan deze tool niet vaststellen. Als dit lukt, zou het gaan om een vrijstelling voor rekenen 2F generiek én het keuzedeel rekenen 3F. Je slb’er kan dat uitzoeken.',
     },
     {
       id: 're-eerste-2-3f-nee', bron: '§6.6 Rekenen, route eerste, niveau 2 — rekenen 3F onder 4',
@@ -870,7 +897,7 @@ function rekenenRegels() {
       onderwerp: 'rekenen', route: 'eerste', huidigNiveau: [3],
       voorwaarden: { bewijsstuk: 're-3f', cijfer: '4-tot-5,5' },
       uitkomst: 'onbekend', vrijstellingVoor: 'rekenen 2F generiek én keuzedeel rekenen 3F (alleen als aan de slaag-/zakregeling van het keuzedeel is voldaan)',
-      uitleg: 'Je cijfer voor rekenen 3F was tussen de 4 en 5,5. Dit kan mogelijk via een speciale route, maar alleen als je ook aan de slaag-/zakvoorwaarde voor het keuzedeel voldoet. Dat kan deze tool niet vaststellen.',
+      uitleg: 'Je cijfer voor rekenen 3F was tussen de 4 en 5,5. Dit kan mogelijk via een speciale route, maar alleen als je ook aan de slaag-/zakvoorwaarde voor het keuzedeel voldoet. Dat kan deze tool niet vaststellen. Als dit lukt, zou het gaan om een vrijstelling voor rekenen 2F generiek én het keuzedeel rekenen 3F. Je slb’er kan dat uitzoeken.',
     },
     {
       id: 're-eerste-3-3f-nee', bron: '§6.6 Rekenen, route eerste, niveau 3 — rekenen 3F onder 4',
@@ -1043,6 +1070,21 @@ function rekenenRegels() {
       uitkomst: 'nee', vrijstellingVoor: null,
       uitleg: 'Je cijfer was lager dan 5,5.',
     },
+    // Niet in de regeling, bevestigd door Jan (vervolgopdracht 01, A3): op
+    // niveau 2 hoort normaal 2F, maar een enkele student heeft toch het
+    // keuzedeel rekenen 3F behaald. Geen cijfergrens genoemd in de
+    // regeling → geen cijfer vragen. Altijd conclusie 3: het examenbureau
+    // beslist, omdat deze situatie niet in de regeling staat (géén "ja",
+    // en géén re-hg-32-tussen-achtige regel die alsnog een vrijstelling
+    // toekent).
+    {
+      id: 're-hg-32-keuzedeel-3f-onbekend',
+      bron: '§6.6 Rekenen, route hoger 3→2: student heeft het keuzedeel rekenen 3F behaald — niet in de regeling, examencommissie beslist (vervolgopdracht 01, A3)',
+      onderwerp: 'rekenen', route: 'hoger', vorigNiveau: 3, huidigNiveau: [2],
+      voorwaarden: { bewijsstuk: 're-32-keuzedeel-3f' },
+      uitkomst: 'onbekend', vrijstellingVoor: null,
+      uitleg: 'Jij zit nu op niveau 2, en daar hoort normaal rekenen op 2F bij. Jij hebt het extra vak rekenen op 3F gehaald. Die situatie staat niet in de regeling. Vraag de vrijstelling wel gewoon aan: het examenbureau beslist hierover.',
+    },
     {
       id: 're-hg-43-ja', bron: '§6.6 Rekenen, route hoger 4→3: 3F of rekenniveau 4 → rekenniveau 3 of keuzedeel rekenen 3-4',
       onderwerp: 'rekenen', route: 'hoger', vorigNiveau: 4, huidigNiveau: [3],
@@ -1055,7 +1097,7 @@ function rekenenRegels() {
       onderwerp: 'rekenen', route: 'hoger', vorigNiveau: 4, huidigNiveau: [3],
       voorwaarden: { bewijsstuk: 're-3f-of-niveau4', cijfer: '4-tot-5,5' },
       uitkomst: 'onbekend', vrijstellingVoor: 'rekenen 2F generiek én keuzedeel rekenen 3F (alleen als aan de slaag-/zakregeling van het keuzedeel is voldaan)',
-      uitleg: 'Je cijfer was tussen de 4 en 5,5. Dit kan mogelijk via een speciale route, maar alleen als je ook aan de slaag-/zakvoorwaarde voor het keuzedeel voldoet. Dat kan deze tool niet vaststellen.',
+      uitleg: 'Je cijfer was tussen de 4 en 5,5. Dit kan mogelijk via een speciale route, maar alleen als je ook aan de slaag-/zakvoorwaarde voor het keuzedeel voldoet. Dat kan deze tool niet vaststellen. Als dit lukt, zou het gaan om een vrijstelling voor rekenen 2F generiek én het keuzedeel rekenen 3F. Je slb’er kan dat uitzoeken.',
     },
     {
       id: 're-hg-43-nee', bron: '§6.6 Rekenen, route hoger 4→3: onder 4',
@@ -1076,7 +1118,7 @@ function rekenenRegels() {
       onderwerp: 'rekenen', route: 'hoger', vorigNiveau: 4, huidigNiveau: [2],
       voorwaarden: { bewijsstuk: 're-3f-of-niveau4', cijfer: '4-tot-5,5' },
       uitkomst: 'onbekend', vrijstellingVoor: 'rekenen generiek én keuzedeel rekenen 3F (alleen als aan de slaag-/zakregeling van het keuzedeel is voldaan)',
-      uitleg: 'Je cijfer was tussen de 4 en 5,5. Dit kan mogelijk via een speciale route, maar alleen als je ook aan de slaag-/zakvoorwaarde voor het keuzedeel voldoet. Dat kan deze tool niet vaststellen.',
+      uitleg: 'Je cijfer was tussen de 4 en 5,5. Dit kan mogelijk via een speciale route, maar alleen als je ook aan de slaag-/zakvoorwaarde voor het keuzedeel voldoet. Dat kan deze tool niet vaststellen. Als dit lukt, zou het gaan om een vrijstelling voor rekenen generiek én het keuzedeel rekenen 3F. Je slb’er kan dat uitzoeken.',
     },
     {
       id: 're-hg-42-nee', bron: '§6.6 Rekenen, route hoger 4→2: onder 4',
@@ -1113,11 +1155,11 @@ function keuzedeelRegels() {
     },
     {
       id: 'kd-zelfde-onvoldoende-voor-2020',
-      bron: '§6.7 Keuzedelen: zelfde keuzedeel, onvoldoende, cohort vóór 2020',
+      bron: '§6.7 Keuzedelen: zelfde keuzedeel, onvoldoende, cohort vóór 2020 (vervolgopdracht 01, A2 — voor 2016-2019 telde alleen de aanwezigheid van een examenresultaat, dus vrijstelling was daar juist wél mogelijk; de tool kan dit niet beslissen)',
       onderwerp: 'keuzedeel', route: null, huidigNiveau: null,
       voorwaarden: { situatie: 'zelfde-keuzedeel', voldoende: false, cohortVanaf2020: false },
-      uitkomst: 'nee', vrijstellingVoor: null,
-      uitleg: 'Je resultaat voor dit keuzedeel was onvoldoende.',
+      uitkomst: 'onbekend', vrijstellingVoor: null,
+      uitleg: 'Voor opleidingen die vóór 2020 zijn gestart golden andere regels voor een extra vak dat je met een onvoldoende hebt afgesloten. Of dat voor jou geldt, kan ik hier niet nakijken. Je slb’er kan dat uitzoeken.',
     },
     {
       id: 'kd-remedierend',
@@ -1125,7 +1167,7 @@ function keuzedeelRegels() {
       onderwerp: 'keuzedeel', route: null, huidigNiveau: null,
       voorwaarden: { situatie: 'remedierend' },
       uitkomst: 'nee', vrijstellingVoor: null,
-      uitleg: 'Een remediërend keuzedeel geeft geen recht op vrijstelling.',
+      uitleg: 'Een extra vak om je niveau bij te spijkeren (een remediërend keuzedeel) geeft geen recht op vrijstelling.',
     },
     {
       id: 'kd-dubbel-gebruik',
@@ -1292,7 +1334,7 @@ const BEWIJSSTUK_LABELS = {
     'nl-alleen-2f-niveau': { label: 'Alleen een bewijsstuk op taalniveau 2F (niet op 3F)', groep: 'Anders' },
     'nl-3f-bewijsstuk-geen-cijfergrens': { label: 'Een erkend bewijsstuk voor Nederlands 3F (het cijfer maakt hier niet uit)', groep: 'Taalniveau 3F' },
     'evc': { label: 'Een EVC-verklaring (eerder verworven competenties)', groep: 'Anders' },
-    'remedierend-keuzedeel': { label: 'Een remediërend extra vak (keuzedeel)', groep: 'Anders' },
+    'remedierend-keuzedeel': { label: 'Een extra vak dat je deed om je niveau bij te spijkeren (een remediërend keuzedeel)', groep: 'Anders' },
     'hbo-wo': { label: 'Een resultaat van het hbo of een universiteit', groep: 'Anders' },
     'niet-erkend': { label: 'Iets anders — ik weet niet zeker of dit een erkend bewijsstuk is', groep: 'Anders' },
   },
@@ -1306,12 +1348,12 @@ const BEWIJSSTUK_LABELS = {
     'en-ce-b1-lezen-luisteren': { label: 'Een cijferlijst met het landelijke examen Engels B1 lezen/luisteren', groep: 'Cijferlijst' },
     'en-ie-a2-gemiddeld': { label: 'Een cijferlijst met het schoolexamen Engels A2, gemiddeld resultaat', groep: 'Cijferlijst' },
     'en-ie-a2-deelresultaat': { label: 'Een cijferlijst met één onderdeel van het schoolexamen Engels A2', groep: 'Cijferlijst' },
-    'en-hg-43-gemiddeld': { label: 'Een cijferlijst met een gemiddeld resultaat Engels B1/A2 of B1/B1', groep: 'Cijferlijst' },
+    'en-hg-hoger-gemiddeld': { label: 'Een cijferlijst met een gemiddeld resultaat Engels B1/A2 of B1/B1', groep: 'Cijferlijst' },
     'en-b1b2-niveau3-eerder-behaald': { label: 'Het extra vak (keuzedeel) Engels B1/B2, al eerder behaald op niveau 3', groep: 'Extra vak' },
     'cambridge-anglia-vo': { label: 'Een Cambridge- of Anglia-certificaat van de middelbare school (vo)', groep: 'Anders' },
     'hbo-wo': { label: 'Een resultaat van het hbo of een universiteit', groep: 'Anders' },
     'evc': { label: 'Een EVC-verklaring (eerder verworven competenties)', groep: 'Anders' },
-    'remedierend-keuzedeel': { label: 'Een remediërend extra vak (keuzedeel)', groep: 'Anders' },
+    'remedierend-keuzedeel': { label: 'Een extra vak dat je deed om je niveau bij te spijkeren (een remediërend keuzedeel)', groep: 'Anders' },
     'niet-erkend': { label: 'Iets anders — ik weet niet zeker of dit een erkend bewijsstuk is', groep: 'Anders' },
   },
   rekenen: {
@@ -1330,10 +1372,11 @@ const BEWIJSSTUK_LABELS = {
     're-2f-of-niveau2': { label: 'Rekenen 2F of rekenniveau 2 gehaald', groep: 'Rekenniveau' },
     're-2f-of-niveau3': { label: 'Rekenen 2F of rekenniveau 3 gehaald', groep: 'Rekenniveau' },
     're-3f-of-niveau4': { label: 'Rekenen 3F of rekenniveau 4 gehaald', groep: 'Rekenniveau' },
+    're-32-keuzedeel-3f': { label: 'Ik heb het extra vak rekenen op 3F gehaald', groep: 'Rekenen 3F' },
     'wiskunde-havo-vwo': { label: 'Een wiskunderesultaat van havo of vwo', groep: 'Anders' },
     'hbo-wo': { label: 'Een resultaat van het hbo of een universiteit', groep: 'Anders' },
     'evc': { label: 'Een EVC-verklaring (eerder verworven competenties)', groep: 'Anders' },
-    'remedierend-keuzedeel': { label: 'Een remediërend extra vak (keuzedeel)', groep: 'Anders' },
+    'remedierend-keuzedeel': { label: 'Een extra vak dat je deed om je niveau bij te spijkeren (een remediërend keuzedeel)', groep: 'Anders' },
     'niet-erkend': { label: 'Iets anders — ik weet niet zeker of dit een erkend bewijsstuk is', groep: 'Anders' },
   },
 };
@@ -1341,7 +1384,7 @@ const BEWIJSSTUK_LABELS = {
 const SITUATIE_LABELS = {
   'zelfde-keuzedeel': 'Precies hetzelfde extra vak (keuzedeel) als eerder',
   'ander-of-lijkend': 'Een ander of lijkend extra vak, of delen van een kwalificatie',
-  'remedierend': 'Een remediërend extra vak',
+  'remedierend': 'Een extra vak dat je deed om je niveau bij te spijkeren (een remediërend keuzedeel)',
   'dubbel-gebruik': 'Hetzelfde extra vak dat al meetelt voor iets anders in mijn opleiding',
 };
 
@@ -1368,9 +1411,12 @@ const CONTEXT_VRAGEN = {
       { waarde: 3, label: 'Niveau 3' }, { waarde: 4, label: 'Niveau 4' },
     ],
   },
-  ouderDan10Jaar: {
-    vraag: 'Is je bewijsstuk ouder dan 10 jaar (gerekend vanaf de start van je huidige opleiding)?',
-    opties: [{ waarde: true, label: 'Ja' }, { waarde: false, label: 'Nee' }],
+  jaarBewijsstuk: {
+    vraag: 'In welk jaar heb je dat diploma of certificaat gehaald?',
+    opties: [
+      { waarde: 'vanaf-grensjaar', label: `${GRENSJAAR_10_JAAR} of later` },
+      { waarde: 'voor-grensjaar', label: `Vóór ${GRENSJAAR_10_JAAR}` },
+    ],
   },
   eerderOnvoldoende: {
     vraag: 'Was je resultaat hiervoor een onvoldoende?',
@@ -1415,6 +1461,8 @@ if (typeof window !== 'undefined') {
 if (typeof window !== 'undefined') {
   window.REGELING_VERSIE = REGELING_VERSIE;
   window.LAATST_BIJGEWERKT = LAATST_BIJGEWERKT;
+  window.HUIDIG_JAAR = HUIDIG_JAAR;
+  window.GRENSJAAR_10_JAAR = GRENSJAAR_10_JAAR;
   window.ONDERWERPEN = ONDERWERPEN;
   window.REGELS = REGELS;
   window.BEREIK_65 = BEREIK_65;
@@ -1425,7 +1473,7 @@ if (typeof window !== 'undefined') {
 // In Node (voor het draaien van tests buiten de browser, mocht dat nodig zijn).
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = {
-    REGELING_VERSIE, LAATST_BIJGEWERKT, ONDERWERPEN, REGELS,
+    REGELING_VERSIE, LAATST_BIJGEWERKT, HUIDIG_JAAR, GRENSJAAR_10_JAAR, ONDERWERPEN, REGELS,
     BEREIK_65, BEREIK_60, BEREIK_55, BEREIK_REKENEN_3F,
     VRAGEN_SCHATTING, CIJFER_LABELS, CIJFER_HAVO_VWO_LABELS,
     BEWIJSSTUK_LABELS, SITUATIE_LABELS, CONTEXT_VRAGEN,
