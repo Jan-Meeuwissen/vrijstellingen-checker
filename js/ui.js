@@ -58,7 +58,7 @@
     div.className = 'let-op';
     div.innerHTML = `
       <h2>Let op</h2>
-      <p>Je hoeft niet in te loggen. Deze pagina vraagt niets over jou en slaat niets op.
+      <p>Je hoeft niet in te loggen. Deze site vraagt niets over jou en slaat niets op.
       Dit is een hulpmiddel, geen besluit. Je kunt er geen rechten aan ontlenen. De
       examencommissie beslist.</p>
     `;
@@ -70,9 +70,11 @@
     wrap.innerHTML = `
       <h1 class="start-titel" tabindex="-1">Kan ik een vrijstelling aanvragen?</h1>
       <div class="start-uitleg">
-        <p>Een vrijstelling betekent dat je een examenonderdeel niet meer hoeft te doen, omdat je
-        al hebt laten zien dat je het kunt. Deze pagina helpt je in een paar vragen inschatten of
-        het zin heeft om dat aan te vragen.</p>
+        <p>Voor je diploma moet je verschillende dingen doen. Examens, maar bijvoorbeeld ook je
+        stage. Heb je zoiets al ergens anders gehaald? Dan hoef je het misschien niet nog een
+        keer te doen. Dat heet een vrijstelling.</p>
+        <p>Deze site helpt je in een paar vragen inschatten of het zin heeft om er een aan te
+        vragen.</p>
       </div>
       <div class="start-knop-wrap">
         <button type="button" class="knop knop-primair" id="start-knop">Start</button>
