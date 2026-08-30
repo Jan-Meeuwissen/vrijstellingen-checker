@@ -57,7 +57,6 @@
     const div = document.createElement('div');
     div.className = 'let-op';
     div.innerHTML = `
-      <h2>Let op</h2>
       <p>Je hoeft niet in te loggen. Deze site vraagt niets over jou en slaat niets op.
       Dit is een hulpmiddel, geen besluit. Je kunt er geen rechten aan ontlenen. De
       examencommissie beslist.</p>

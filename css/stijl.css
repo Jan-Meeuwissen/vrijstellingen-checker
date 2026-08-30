@@ -341,18 +341,15 @@ a { color: var(--paars-donker); }
   margin: 0;
 }
 
-/* -------- "Let op"-blok (startscherm + uitkomstscherm) -------- */
+/* -------- Disclaimer-blok (startscherm + uitkomstscherm) -------- */
 .let-op {
   border-left: 4px solid var(--roze);
   padding-left: 0.85rem;
   margin: 1.5rem 0 1rem;
 }
-.let-op h2 {
-  font-size: 0.95rem;
-  margin: 0 0 0.3rem;
-}
 .let-op p {
-  font-size: 0.9rem;
+  font-style: italic;
+  font-size: 0.8rem;
   color: var(--paars-donker-licht20);
   margin: 0;
 }
