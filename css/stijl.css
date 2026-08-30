@@ -1,0 +1,350 @@
+/* Huisstijl ROC Nijmegen — zie §4 van de bouwopdracht. Kleuren en fonts
+   zijn letterlijk overgenomen; niets komt van een CDN. */
+
+@font-face {
+  font-family: 'Montserrat';
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+  src: url('../assets/fonts/montserrat-bold.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Montserrat';
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+  src: url('../assets/fonts/montserrat-black.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Roboto';
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+  src: url('../assets/fonts/roboto-regular.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Bungee';
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+  src: url('../assets/fonts/bungee-regular.woff2') format('woff2');
+}
+
+:root {
+  --paars-donker: #3f2e56;
+  --paars-midden: #6e6eb4;
+  --blauw-licht: #98d3eb;
+  --roze: #cd3c74;
+  --geel: #eead29;
+
+  --paars-donker-licht20: color-mix(in srgb, var(--paars-donker) 80%, white);
+  --paars-donker-licht40: color-mix(in srgb, var(--paars-donker) 60%, white);
+  --paars-midden-licht40: color-mix(in srgb, var(--paars-midden) 60%, white);
+  --paars-midden-donker20: color-mix(in srgb, var(--paars-midden) 80%, black);
+  --blauw-licht-donker20: color-mix(in srgb, var(--blauw-licht) 80%, black);
+
+  --wit: #ffffff;
+  --achtergrond: #faf9fc;
+  --tekst: var(--paars-donker);
+
+  --font-kop: 'Montserrat', system-ui, sans-serif;
+  --font-titel: 'Bungee', var(--font-kop);
+  --font-tekst: 'Roboto', system-ui, sans-serif;
+
+  --radius: 16px;
+  color-scheme: light;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--achtergrond);
+  color: var(--tekst);
+  font-family: var(--font-tekst);
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+h1, h2, h3, legend {
+  font-family: var(--font-kop);
+  font-weight: 700;
+  line-height: 1.25;
+  color: var(--paars-donker);
+}
+
+a { color: var(--paars-donker); }
+
+.noscript-melding {
+  background: var(--geel);
+  color: var(--paars-donker);
+  padding: 1.5rem;
+  text-align: center;
+  font-weight: 700;
+}
+
+/* -------- Header / footer -------- */
+.header {
+  background: var(--paars-donker);
+  color: var(--wit);
+  padding: 0.75rem 1.25rem;
+}
+.header-binnen {
+  max-width: 720px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.header-titel {
+  font-family: var(--font-kop);
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+.header-logo {
+  height: 40px;
+  width: auto;
+  flex-shrink: 0;
+}
+
+.footer {
+  background: var(--paars-donker);
+  color: var(--wit);
+  text-align: center;
+  padding: 1rem;
+  margin-top: auto;
+  font-size: 0.9rem;
+}
+.footer p { margin: 0; }
+
+.hoofd {
+  flex: 1;
+  max-width: 720px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 1.5rem 1.25rem 3rem;
+}
+
+/* -------- Startscherm -------- */
+.start-titel {
+  font-family: var(--font-titel);
+  font-size: clamp(1.8rem, 6vw, 2.6rem);
+  margin: 0.5rem 0 1.25rem;
+}
+.start-uitleg p { margin: 0 0 0.75rem; }
+.start-knop-wrap { margin: 1.5rem 0; }
+.start-meta {
+  font-size: 0.85rem;
+  color: var(--paars-donker-licht20);
+  margin-top: 2rem;
+}
+
+/* -------- Knoppen -------- */
+.knop {
+  font-family: var(--font-tekst);
+  font-size: 1rem;
+  font-weight: 700;
+  border: 2px solid var(--paars-donker);
+  border-radius: 999px;
+  padding: 0.75rem 1.5rem;
+  min-height: 44px;
+  min-width: 44px;
+  cursor: pointer;
+  background: var(--wit);
+  color: var(--paars-donker);
+}
+.knop-primair {
+  background: var(--paars-donker);
+  color: var(--wit);
+}
+.knop-primair:hover { background: var(--paars-donker-licht20); border-color: var(--paars-donker-licht20); }
+.knop-secundair:hover { background: var(--achtergrond); }
+.knop:focus-visible, a:focus-visible, .antwoord-knop:focus-visible, .gewijzigd-item:focus-visible {
+  outline: 3px solid var(--paars-midden);
+  outline-offset: 2px;
+}
+.knoppenrij {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-top: 1.5rem;
+}
+
+/* -------- Voortgang -------- */
+.voortgang {
+  margin-bottom: 1.25rem;
+}
+.voortgang-tekst {
+  font-size: 0.9rem;
+  font-weight: 700;
+  margin-bottom: 0.35rem;
+}
+.voortgang-balk-buiten {
+  height: 8px;
+  border-radius: 999px;
+  background: var(--paars-midden-licht40);
+  overflow: hidden;
+}
+.voortgang-balk-binnen {
+  height: 100%;
+  background: var(--paars-midden);
+  border-radius: 999px;
+  transition: width 0.2s ease;
+}
+
+/* -------- Wat je al hebt ingevuld -------- */
+.ingevuld {
+  border: 1px solid var(--paars-midden-licht40);
+  border-radius: var(--radius);
+  padding: 0.75rem 1rem;
+  margin-bottom: 1.5rem;
+  background: var(--wit);
+}
+.ingevuld h2 {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  margin: 0 0 0.5rem;
+}
+.ingevuld ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.4rem; }
+.gewijzigd-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.75rem;
+  width: 100%;
+  background: none;
+  border: none;
+  border-bottom: 1px dashed var(--paars-midden-licht40);
+  padding: 0.3rem 0;
+  font-family: var(--font-tekst);
+  font-size: 0.95rem;
+  text-align: left;
+  cursor: pointer;
+  color: var(--tekst);
+  border-radius: 4px;
+}
+.gewijzigd-item:hover { background: var(--achtergrond); }
+.gewijzigd-item .label { color: var(--paars-donker-licht20); }
+.gewijzigd-item .waarde { font-weight: 700; }
+.gewijzigd-item .wijzig-hint { font-size: 0.8rem; color: var(--paars-midden-donker20); text-decoration: underline; }
+
+/* -------- Vraag -------- */
+.vraagblok fieldset {
+  border: none;
+  margin: 0;
+  padding: 0;
+}
+.vraagblok legend {
+  font-size: 1.3rem;
+  padding: 0;
+  margin-bottom: 1rem;
+  width: 100%;
+}
+.opties-groep-titel {
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--paars-midden-donker20);
+  margin: 1rem 0 0.4rem;
+}
+.opties-groep-titel:first-of-type { margin-top: 0; }
+.opties {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+.antwoord-knop {
+  font-family: var(--font-tekst);
+  font-size: 1rem;
+  text-align: left;
+  border: 2px solid var(--paars-midden-licht40);
+  border-radius: var(--radius);
+  padding: 0.9rem 1.1rem;
+  min-height: 44px;
+  background: var(--wit);
+  color: var(--tekst);
+  cursor: pointer;
+}
+.antwoord-knop:hover { border-color: var(--paars-midden); }
+.antwoord-knop.geselecteerd {
+  background: var(--blauw-licht);
+  border-color: var(--paars-donker);
+  color: var(--paars-donker);
+  font-weight: 700;
+}
+.antwoord-knop.weet-ik-niet {
+  border-style: dashed;
+  color: var(--paars-donker-licht20);
+}
+.tekstveld {
+  font-family: var(--font-tekst);
+  font-size: 1rem;
+  padding: 0.75rem 1rem;
+  border: 2px solid var(--paars-midden-licht40);
+  border-radius: var(--radius);
+  width: 100%;
+  min-height: 44px;
+}
+.tekstveld:focus-visible { outline: 3px solid var(--paars-midden); outline-offset: 2px; }
+.veldlabel { display: block; font-weight: 700; margin: 1rem 0 0.4rem; }
+
+/* -------- Uitkomstscherm -------- */
+.uitkomst-kop {
+  font-size: 1.5rem;
+  padding: 1rem 1.25rem;
+  border-radius: var(--radius);
+  margin-bottom: 1.25rem;
+}
+.uitkomst-ja { background: var(--blauw-licht); color: var(--paars-donker); }
+.uitkomst-nee { background: var(--geel); color: var(--paars-donker); }
+.uitkomst-onbekend { background: var(--paars-donker); color: var(--wit); }
+
+.uitkomst-sectie { margin-bottom: 1.25rem; }
+.uitkomst-sectie h2 { font-size: 1.05rem; margin-bottom: 0.4rem; }
+
+.balkje {
+  display: inline-block;
+  width: 3px;
+  height: 1em;
+  background: var(--blauw-licht);
+  transform: skewX(-9deg);
+  margin-right: 0.5rem;
+  vertical-align: middle;
+}
+
+.disclaimer {
+  font-size: 0.9rem;
+  border-top: 1px solid var(--paars-midden-licht40);
+  padding-top: 1rem;
+  margin-top: 1.5rem;
+  color: var(--paars-donker-licht20);
+}
+
+.bevestiging {
+  display: inline-block;
+  margin-left: 0.75rem;
+  font-weight: 700;
+  color: var(--paars-donker);
+}
+
+/* -------- Toegankelijkheid: contrastvlakken -------- */
+.let-op {
+  border-left: 4px solid var(--roze);
+  padding-left: 0.85rem;
+  margin: 1rem 0;
+}
+
+@media (max-width: 420px) {
+  .header-logo { height: 32px; }
+  .hoofd { padding: 1.25rem 1rem 2.5rem; }
+}
