@@ -322,14 +322,6 @@ a { color: var(--paars-donker); }
   vertical-align: middle;
 }
 
-.disclaimer {
-  font-size: 0.9rem;
-  border-top: 1px solid var(--paars-midden-licht40);
-  padding-top: 1rem;
-  margin-top: 1.5rem;
-  color: var(--paars-donker-licht20);
-}
-
 .bevestiging {
   display: inline-block;
   margin-left: 0.75rem;
@@ -337,14 +329,42 @@ a { color: var(--paars-donker); }
   color: var(--paars-donker);
 }
 
-/* -------- Toegankelijkheid: contrastvlakken -------- */
+.samenvatting-kader {
+  font-family: var(--font-tekst);
+  font-size: 0.95rem;
+  white-space: pre-wrap;
+  word-break: break-word;
+  background: var(--wit);
+  border: 1px solid var(--paars-midden-licht40);
+  border-radius: var(--radius);
+  padding: 1rem 1.1rem;
+  margin: 0;
+}
+
+/* -------- "Let op"-blok (startscherm + uitkomstscherm) -------- */
 .let-op {
   border-left: 4px solid var(--roze);
   padding-left: 0.85rem;
-  margin: 1rem 0;
+  margin: 1.5rem 0 1rem;
+}
+.let-op h2 {
+  font-size: 0.95rem;
+  margin: 0 0 0.3rem;
+}
+.let-op p {
+  font-size: 0.9rem;
+  color: var(--paars-donker-licht20);
+  margin: 0;
 }
 
 @media (max-width: 420px) {
   .header-logo { height: 32px; }
   .hoofd { padding: 1.25rem 1rem 2.5rem; }
+}
+
+/* Tablet: iets ruimere marges dan telefoon, maar niet meteen de volle
+   desktopbreedte van .hoofd benutten (vervolgopdracht 01, D2). */
+@media (min-width: 421px) and (max-width: 768px) {
+  .hoofd { padding: 1.75rem 2rem 3rem; }
+  .opties { gap: 0.75rem; }
 }

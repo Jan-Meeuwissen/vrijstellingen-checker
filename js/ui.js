@@ -50,6 +50,21 @@
     if (element.focus) element.focus();
   }
 
+  // Eén gedeeld "Let op"-blok voor start- en uitkomstscherm (vervolgopdracht
+  // 01, C2) — voorheen stond vergelijkbare tekst los op drie plekken
+  // (startscherm, disclaimer, footer).
+  function renderLetOp() {
+    const div = document.createElement('div');
+    div.className = 'let-op';
+    div.innerHTML = `
+      <h2>Let op</h2>
+      <p>Je hoeft niet in te loggen. Deze pagina vraagt niets over jou en slaat niets op.
+      Dit is een hulpmiddel, geen besluit. Je kunt er geen rechten aan ontlenen. De
+      examencommissie beslist.</p>
+    `;
+    return div;
+  }
+
   function renderStart() {
     const wrap = document.createElement('div');
     wrap.innerHTML = `
@@ -58,16 +73,16 @@
         <p>Een vrijstelling betekent dat je een examenonderdeel niet meer hoeft te doen, omdat je
         al hebt laten zien dat je het kunt. Deze pagina helpt je in een paar vragen inschatten of
         het zin heeft om dat aan te vragen.</p>
-        <p>Je hoeft geen naam, geboortedatum of studentnummer in te vullen. Alleen wat er op een
-        diploma of cijferlijst staat.</p>
-        <p>Dit is een hulpmiddel. De uiteindelijke beslissing ligt altijd bij de
-        examencommissie.</p>
       </div>
       <div class="start-knop-wrap">
         <button type="button" class="knop knop-primair" id="start-knop">Start</button>
       </div>
-      <p class="start-meta">Laatst bijgewerkt: ${window.LAATST_BIJGEWERKT} — regeling ${window.REGELING_VERSIE}</p>
     `;
+    wrap.appendChild(renderLetOp());
+    const meta = document.createElement('p');
+    meta.className = 'start-meta';
+    meta.textContent = `Laatst bijgewerkt: ${window.LAATST_BIJGEWERKT} — regeling ${window.REGELING_VERSIE}`;
+    wrap.appendChild(meta);
     wisAppEnFocus(wrap);
     document.getElementById('start-knop').addEventListener('click', () => {
       geschiedenis = [];
@@ -104,13 +119,18 @@
     return box;
   }
 
+  // Schatting vóór het onderwerp bekend is: een eerlijke ondergrens, geen
+  // "vraag 1 van ongeveer 1" die meteen achterhaald is (vervolgopdracht 01,
+  // D1). 6 is de langste realistische schatting van VRAGEN_SCHATTING.
+  const SCHATTING_VOOR_ONDERWERP_BEKEND = 6;
+
   function schattingVoorOnderwerp(onderwerp) {
     return (window.VRAGEN_SCHATTING && window.VRAGEN_SCHATTING[onderwerp]) || 5;
   }
 
   function renderVoortgang(antwoorden) {
     const vraagNummer = geschiedenis.length + 1;
-    const totaalSchatting = antwoorden.onderwerp ? schattingVoorOnderwerp(antwoorden.onderwerp) : vraagNummer;
+    const totaalSchatting = antwoorden.onderwerp ? schattingVoorOnderwerp(antwoorden.onderwerp) : SCHATTING_VOOR_ONDERWERP_BEKEND;
     const percentage = Math.min(100, Math.round((vraagNummer / Math.max(totaalSchatting, vraagNummer)) * 100));
     const div = document.createElement('div');
     div.className = 'voortgang';
@@ -251,7 +271,7 @@
     if (onderwerp === 'stage') {
       return 'De teammanager beoordeelt of je werkervaring de stage mag vervangen. Bespreek dit met je slb’er.';
     }
-    return 'Ga naar je slb’er. Neem je bewijsstuk mee en leg uit waarom je twijfelt over een vrijstelling.';
+    return 'Ga naar je slb’er. Neem je bewijsstuk mee en vraag of het zin heeft om een vrijstelling aan te vragen.';
   }
 
   function samenvattingTekst(resultaat, antwoorden) {
@@ -268,6 +288,11 @@
     regels.push('Uitkomst: ' + UITKOMST_KOP[resultaat.uitkomst]);
     if (resultaat.regel && resultaat.regel.uitleg) {
       regels.push('Waarom: ' + resultaat.regel.uitleg);
+    }
+    // "Vrijstelling voor" alleen bij een echte "ja" — bij conclusie 3 mag
+    // dit niet als toegekend overkomen (vervolgopdracht 01, A4).
+    if (resultaat.uitkomst === 'ja' && resultaat.regel && resultaat.regel.vrijstellingVoor) {
+      regels.push('Vrijstelling voor: ' + resultaat.regel.vrijstellingVoor);
     }
     regels.push('Wat nu: ' + watNuTekst(resultaat, antwoorden));
     return regels.join('\n');
@@ -288,7 +313,7 @@
     waarom.innerHTML = `<h2><span class="balkje"></span>Waarom</h2><p>${(resultaat.regel && resultaat.regel.uitleg) || 'Geen van de bekende regels past op je antwoorden.'}</p>`;
     wrap.appendChild(waarom);
 
-    if (resultaat.regel && resultaat.regel.vrijstellingVoor) {
+    if (resultaat.uitkomst === 'ja' && resultaat.regel && resultaat.regel.vrijstellingVoor) {
       const voor = document.createElement('div');
       voor.className = 'uitkomst-sectie';
       voor.innerHTML = `<h2><span class="balkje"></span>Vrijstelling voor</h2><p>${resultaat.regel.vrijstellingVoor}</p>`;
@@ -299,6 +324,20 @@
     watNu.className = 'uitkomst-sectie';
     watNu.innerHTML = `<h2><span class="balkje"></span>Wat nu</h2><p>${watNuTekst(resultaat, antwoorden)}</p>`;
     wrap.appendChild(watNu);
+
+    // Zichtbare samenvatting, in een kader — precies de tekst die de knop
+    // hieronder ook kopieert (vervolgopdracht 01, C3).
+    const samenvattingTekstWaarde = samenvattingTekst(resultaat, antwoorden);
+    const samenvattingBlok = document.createElement('div');
+    samenvattingBlok.className = 'uitkomst-sectie';
+    const samenvattingKop = document.createElement('h2');
+    samenvattingKop.innerHTML = '<span class="balkje"></span>Dit kopieer je';
+    const samenvattingKader = document.createElement('pre');
+    samenvattingKader.className = 'samenvatting-kader';
+    samenvattingKader.textContent = samenvattingTekstWaarde;
+    samenvattingBlok.appendChild(samenvattingKop);
+    samenvattingBlok.appendChild(samenvattingKader);
+    wrap.appendChild(samenvattingBlok);
 
     const knoppenrij = document.createElement('div');
     knoppenrij.className = 'knoppenrij';
@@ -311,7 +350,7 @@
     bevestigingSpan.className = 'bevestiging';
     bevestigingSpan.setAttribute('role', 'status');
     kopieerKnop.addEventListener('click', async () => {
-      const tekst = samenvattingTekst(resultaat, antwoorden);
+      const tekst = samenvattingTekstWaarde;
       try {
         await navigator.clipboard.writeText(tekst);
       } catch (fout) {
@@ -342,10 +381,7 @@
     knoppenrij.appendChild(opnieuwKnop);
     wrap.appendChild(knoppenrij);
 
-    const disclaimer = document.createElement('p');
-    disclaimer.className = 'disclaimer';
-    disclaimer.textContent = 'Dit is een hulpmiddel. De examencommissie beslist altijd zelf, en kan tot een andere uitkomst komen.';
-    wrap.appendChild(disclaimer);
+    wrap.appendChild(renderLetOp());
 
     wisAppEnFocus(wrap);
     kop.focus();
