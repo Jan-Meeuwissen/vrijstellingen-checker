@@ -7,10 +7,13 @@
  * `antwoorden` bevat de ruwe waarden zoals de motor ze gebruikt (zie
  * js/regels.js voor de betekenis van elke bewijsstuk-code). Waar het
  * testgeval geen uitspraak doet over ouderdom of eerdere onvoldoendes is
- * dat stilzwijgend "nee" (schoon geval) — dat hoort bij de beschrijving.
+ * dat stilzwijgend "nee"/"schoon" (dat hoort bij de beschrijving).
+ *
+ * Testgevallen 33 t/m 37 zijn toegevoegd naar aanleiding van
+ * VERVOLGOPDRACHT-01.md (A1, A3, A2, B1).
  */
 
-const SCHOON = { ouderDan10Jaar: false, eerderOnvoldoende: false };
+const SCHOON = { jaarBewijsstuk: 'vanaf-grensjaar', eerderOnvoldoende: false };
 
 const TESTGEVALLEN = [
   {
@@ -163,9 +166,9 @@ const TESTGEVALLEN = [
   },
   {
     nr: 28, omschrijving: 'Mbo-diploma van 12 jaar oud, ruim voldoende.',
-    toelichting: '10-jaarregel',
-    antwoorden: { onderwerp: 'nederlands', huidigNiveau: 3, heeftEerdereMbo: false, bewijsstuk: 'nl-ceie-2f-heel', cijfer: 'vanaf-6,5', ouderDan10Jaar: true, eerderOnvoldoende: false },
-    verwacht: 'nee',
+    toelichting: '10-jaarregel — sinds vervolgopdracht 01 (B2) een jaartal-vraag i.p.v. "ouder dan 10 jaar?", en conclusie 3 i.p.v. 2 (hangt af van de startdatum van de opleiding)',
+    antwoorden: { onderwerp: 'nederlands', huidigNiveau: 3, heeftEerdereMbo: false, bewijsstuk: 'nl-ceie-2f-heel', cijfer: 'vanaf-6,5', jaarBewijsstuk: 'voor-grensjaar', eerderOnvoldoende: false },
+    verwacht: 'onbekend',
   },
   {
     nr: 29, omschrijving: 'Buitenlands diploma (Pools).',
@@ -188,6 +191,39 @@ const TESTGEVALLEN = [
     antwoorden: { onderwerp: 'nederlands', huidigNiveau: 3, heeftEerdereMbo: true, vorigNiveau: 4, bewijsstuk: 'nl-3f-bewijsstuk-geen-cijfergrens', ...SCHOON },
     verwacht: 'ja',
     controleerGeenVeld: ['cijfer', 'cijferHavoVwo'],
+  },
+  {
+    nr: 33, omschrijving: 'Engels. Was niveau 4, nu 2 (afstroom). Gemiddeld resultaat B1/A2 ≥ 5,5.',
+    toelichting: 'vervolgopdracht 01, A1 — deze route ontbrak eerder helemaal',
+    antwoorden: { onderwerp: 'engels', huidigNiveau: 2, heeftEerdereMbo: true, vorigNiveau: 4, bewijsstuk: 'en-hg-hoger-gemiddeld', cijfer: 'vanaf-5,5', ...SCHOON },
+    verwacht: 'ja',
+  },
+  {
+    nr: 34, omschrijving: 'Rekenen. Was niveau 3, nu 2 (afstroom). Keuzedeel rekenen 3F behaald.',
+    toelichting: 'vervolgopdracht 01, A3 — niet in de regeling, bevestigd door Jan: altijd conclusie 3, geen cijfervraag',
+    antwoorden: { onderwerp: 'rekenen', huidigNiveau: 2, heeftEerdereMbo: true, vorigNiveau: 3, bewijsstuk: 're-32-keuzedeel-3f', ...SCHOON },
+    verwacht: 'onbekend',
+    controleerGeenVeld: ['cijfer'],
+  },
+  {
+    nr: 35, omschrijving: 'Keuzedeel. Zelfde keuzedeel, onvoldoende, cohort vóór 2020.',
+    toelichting: 'vervolgopdracht 01, A2 — was nee, moet onbekend zijn (compensatie mogelijk voor cohorten 2016-2019)',
+    antwoorden: { onderwerp: 'keuzedeel', situatie: 'zelfde-keuzedeel', voldoende: false, cohortVanaf2020: false },
+    verwacht: 'onbekend',
+  },
+  {
+    nr: 36, omschrijving: 'Nederlands. Cijfer ≥ 6,5 gegeven — de aparte "was het onvoldoende?"-vraag mag dan niet meer gesteld worden.',
+    toelichting: 'vervolgopdracht 01, B1',
+    antwoorden: { onderwerp: 'nederlands', huidigNiveau: 3, heeftEerdereMbo: false, bewijsstuk: 'nl-ceie-2f-heel', cijfer: 'vanaf-6,5', jaarBewijsstuk: 'vanaf-grensjaar' },
+    verwacht: 'ja',
+    controleerGeenVeld: ['eerderOnvoldoende'],
+  },
+  {
+    nr: 37, omschrijving: 'Nederlands. Cijfer onder 5,5 (keuzedeel K0071) — geen aparte onvoldoende-vraag, en de al vaststaande "nee" blijft staan.',
+    toelichting: 'vervolgopdracht 01, B1 — bewuste afwijking: we laten een cijfer-onder-de-grens de al bepaalde "nee" niet overschrijven naar "onbekend", zie de toelichting in engine.js bij metAfgeleideVelden()',
+    antwoorden: { onderwerp: 'nederlands', huidigNiveau: 3, heeftEerdereMbo: false, bewijsstuk: 'nl-k0071', cijfer: 'onder-5,5', jaarBewijsstuk: 'vanaf-grensjaar' },
+    verwacht: 'nee',
+    controleerGeenVeld: ['eerderOnvoldoende'],
   },
 ];
 

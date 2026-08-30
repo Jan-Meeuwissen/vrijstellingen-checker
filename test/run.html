@@ -24,14 +24,20 @@
   .pad.open { display: block; }
   .pad ol { margin: 0.25rem 0 0; padding-left: 1.25rem; }
   code { background: #eee; padding: 0 0.25rem; border-radius: 3px; }
+  #padregressie { font-size: 0.95rem; padding: 0.75rem 1rem; border-radius: 8px; margin-bottom: 1.5rem; }
+  #padregressie.alles-geslaagd { background: #d4f4dd; color: #1a4d2e; }
+  #padregressie.er-zijn-fouten { background: #fbdada; color: #6b1414; }
+  #padregressie ul { margin: 0.35rem 0 0; padding-left: 1.25rem; }
 </style>
 </head>
 <body>
 <h1>Testresultaten — Vrijstellingen-checker</h1>
-<p>Draait de 32 testgevallen uit §12.1 van de bouwopdracht door <code>bepaal()</code> uit
-<code>js/engine.js</code>, met de regels uit <code>js/regels.js</code>. Geen testframework nodig
-— open dit bestand gewoon via een lokale server.</p>
+<p>Draait de testgevallen uit §12.1 van de bouwopdracht (plus de gevallen uit
+VERVOLGOPDRACHT-01.md) door <code>bepaal()</code> uit <code>js/engine.js</code>, met de regels
+uit <code>js/regels.js</code>. Geen testframework nodig — open dit bestand gewoon via een lokale
+server.</p>
 <div id="score"></div>
+<div id="padregressie"></div>
 <div id="gevallen"></div>
 
 <script src="../js/regels.js"></script>
@@ -92,6 +98,54 @@
   const totaal = TESTGEVALLEN.length;
   scoreDiv.textContent = `${geslaagd} van de ${totaal} testgevallen geslaagd`;
   scoreDiv.className = geslaagd === totaal ? 'alles-geslaagd' : 'er-zijn-fouten';
+
+  // ---------------------------------------------------------------------
+  // Padregressie: speel ÉÉN KEER elk mogelijk pad door de motor af (elke
+  // combinatie van antwoorden), en controleer dat geen enkel veld twee keer
+  // wordt gevraagd op hetzelfde pad, en dat elk pad in een geldige uitkomst
+  // eindigt. Dit was hét probleem van de oude chatbotversie — bewaak het
+  // bij elke wijziging aan regels.js/engine.js. Zie VERVOLGOPDRACHT-01.md.
+  // ---------------------------------------------------------------------
+  function alleParen(maxPaden) {
+    const paden = [];
+    const dubbel = [];
+    (function ga(antwoorden, gevraagd) {
+      if (paden.length >= maxPaden) return;
+      const stap = bepaal(antwoorden, data);
+      if (!stap) return;
+      if (stap.type === 'uitkomst') {
+        paden.push({ antwoorden: { ...antwoorden }, uitkomst: stap.uitkomst });
+        return;
+      }
+      if (gevraagd.includes(stap.veld)) {
+        dubbel.push({ veld: stap.veld, antwoorden: { ...antwoorden } });
+        return;
+      }
+      for (const optie of stap.opties) {
+        ga({ ...antwoorden, [stap.veld]: optie.waarde }, [...gevraagd, stap.veld]);
+      }
+    })({}, []);
+    return { paden, dubbel };
+  }
+
+  const { paden, dubbel } = alleParen(50000);
+  const geenGeldigeUitkomst = paden.filter((p) => !['ja', 'nee', 'onbekend'].includes(p.uitkomst));
+  const lengtes = paden.map((p) => Object.keys(p.antwoorden).length);
+  const telling = { ja: 0, nee: 0, onbekend: 0 };
+  paden.forEach((p) => { if (telling[p.uitkomst] !== undefined) telling[p.uitkomst] += 1; });
+
+  const padregressieDiv = document.getElementById('padregressie');
+  const padregressieOk = dubbel.length === 0 && geenGeldigeUitkomst.length === 0;
+  padregressieDiv.className = padregressieOk ? 'alles-geslaagd' : 'er-zijn-fouten';
+  padregressieDiv.innerHTML = `
+    <strong>Padregressie: ${padregressieOk ? '✔ geslaagd' : '✘ gezakt'}</strong>
+    <ul>
+      <li>${paden.length} paden doorlopen (kortste ${Math.min(...lengtes)}, langste ${Math.max(...lengtes)} vragen)</li>
+      <li>Dubbele vragen: ${dubbel.length} ${dubbel.length === 0 ? '' : '⚠ moet 0 zijn — ' + dubbel.slice(0, 5).map((d) => d.veld).join(', ')}</li>
+      <li>Paden zonder geldige uitkomst: ${geenGeldigeUitkomst.length}</li>
+      <li>Uitkomsten: ${telling.ja}× ja, ${telling.nee}× nee, ${telling.onbekend}× onbekend</li>
+    </ul>
+  `;
 })();
 </script>
 </body>
