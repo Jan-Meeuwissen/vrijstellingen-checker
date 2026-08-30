@@ -331,7 +331,7 @@
     const samenvattingBlok = document.createElement('div');
     samenvattingBlok.className = 'uitkomst-sectie';
     const samenvattingKop = document.createElement('h2');
-    samenvattingKop.innerHTML = '<span class="balkje"></span>Dit kopieer je';
+    samenvattingKop.innerHTML = '<span class="balkje"></span>Samenvatting';
     const samenvattingKader = document.createElement('pre');
     samenvattingKader.className = 'samenvatting-kader';
     samenvattingKader.textContent = samenvattingTekstWaarde;
