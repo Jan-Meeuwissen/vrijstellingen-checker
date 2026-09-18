@@ -6,7 +6,8 @@ zin, waarschijnlijk weinig zin, of "dit kan ik niet nakijken, bespreek het met j
 
 Statische site: HTML + CSS + vanilla JavaScript, geen framework, geen build-stap, geen
 dependencies. Alles draait in de browser; er verlaat niets. Zie `BOUWOPDRACHT.md` voor de
-volledige opdracht en de achtergrond.
+volledige opdracht en de achtergrond, en `docs/adr/` voor
+de belangrijkste ontwerpkeuzes en waarom ze zo zijn gemaakt.
 
 ## Lokaal openen
 
@@ -87,6 +88,7 @@ js/ui.js                Rendering en interactie
 assets/                 Logo's (svg) en lokale webfonts (woff2)
 test/cases.js           De 32 testgevallen uit §12.1
 test/run.html           Speelt de testgevallen af, toont geslaagd/gezakt
+docs/adr/               Architectuurbeslissingen (ADR's): wat we besloten en waarom
 deploy.sh                Zet de site over naar faistos.nl/vrijstelling
 .env.voorbeeld           Sjabloon voor de deploy-configuratie
 ```
